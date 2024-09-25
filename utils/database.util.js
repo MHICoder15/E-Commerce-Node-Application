@@ -8,19 +8,19 @@ const connectMongoDB = (callback) => {
       console.log(
         `MongoDB Connected!! DB Host: ${mongoInstance.connection.host}`
       );
-      User.findOne().then((user) => {
-        if (!user) {
-          const user = new User({
-            name: "Hasnain Malik",
-            email: "hasnain@gmail.com",
-            password: "Admin@123",
-            cart: {
-              items: [],
-            },
-          });
-          user.save();
-        }
-      });
+      // User.findOne().then((user) => {
+      //   if (!user) {
+      //     const user = new User({
+      //       name: "Hasnain Malik",
+      //       email: "hasnain@gmail.com",
+      //       password: "Admin@123",
+      //       cart: {
+      //         items: [],
+      //       },
+      //     });
+      //     user.save();
+      //   }
+      // });
       callback();
     })
     .catch((error) => {
