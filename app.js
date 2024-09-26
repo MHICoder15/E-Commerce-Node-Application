@@ -12,12 +12,15 @@ const User = require("./models/user");
 const connectMongoDB = require("./utils/database.util").connectMongoDB;
 const session = require("express-session");
 const MongodbStore = require("connect-mongodb-session")(session);
+const csrf = require("csurf");
+const flash = require("connect-flash");
 
 const app = express();
 const store = new MongodbStore({
   uri: "mongodb://127.0.0.1:27017/e-commerce-db",
   collection: "sessions",
 });
+const csrfProtection = csrf();
 
 // Middleware for body parser
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -38,6 +41,8 @@ app.use(
     store: store,
   })
 );
+app.use(csrfProtection);
+app.use(flash());
 
 app.use((req, res, next) => {
   if (!req.session.user) {
@@ -49,6 +54,12 @@ app.use((req, res, next) => {
       next();
     })
     .catch((err) => console.log("Find User By ID Error:", err));
+});
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
 });
 
 // Middleware For Routes

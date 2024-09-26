@@ -4,6 +4,21 @@
   <body>
     <%- include('../layouts/navigation')%>
     <main>
+      <% if(errorMessage && errorMessage.length > 0) { %>
+      <div class="alert-container">
+        <div class="alert alert-error">
+          <div><%= errorMessage %></div>
+          <img class="alert-cross-icon" src="/img/cross-icon-error.svg" />
+        </div>
+      </div>
+      <% } else if(successMessage && successMessage.length > 0) { %>
+      <div class="alert-container">
+        <div class="alert alert-success">
+          <div><%= successMessage %></div>
+          <img class="cross-icon" src="/img/cross-icon-success.svg" />
+        </div>
+      </div>
+      <% } %>
       <form class="login-form" action="/login" method="POST">
         <div class="form-control">
           <label for="email">E-mail</label>
@@ -13,6 +28,7 @@
           <label for="password">Password</label>
           <input type="password" name="password" id="password" />
         </div>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
         <button class="btn" type="submit">Login</button>
       </form>
     </main>

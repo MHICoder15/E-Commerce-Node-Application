@@ -4,6 +4,14 @@
   <body>
     <%- include('../layouts/navigation')%>
     <main>
+      <% if(errorMessage && errorMessage.length > 0) { %>
+      <div class="alert-container">
+        <div class="alert alert-error">
+          <div><%= errorMessage %></div>
+          <img class="alert-cross-icon" src="/img/cross-icon-error.svg" />
+        </div>
+      </div>
+      <% } %>
       <form class="register-form" action="/register" method="POST">
         <div class="form-control">
           <label for="name">Name</label>
@@ -21,6 +29,7 @@
           <label for="confirmPassword">Confirm Password</label>
           <input type="password" name="confirmPassword" id="confirmPassword" />
         </div>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
         <button class="btn" type="submit">Register</button>
       </form>
     </main>

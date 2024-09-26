@@ -232,6 +232,40 @@ form {
   color: white;
 }
 
+.alert-container {
+  display: flex;
+  justify-content: center;
+}
+.alert {
+  width: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  color: #0f62fe;
+  border: 1px solid #0f62fe;
+  background-color: #0f62fe4d;
+  padding: 1rem;
+  border-radius: 5px;
+}
+.alert-cross-icon {
+  width: 22px;
+  cursor: pointer;
+}
+.alert-error {
+  color: #fa4d56;
+  border: 1px solid #fa4d56;
+  background-color: #fa4d564d;
+}
+.alert-success {
+  color: #42be65;
+  border: 1px solid #42be65;
+  background-color: #42be654d;
+}
+.display-none {
+  display: none;
+}
+
 footer p {
   text-align: center;
   color: #7c93c3;
