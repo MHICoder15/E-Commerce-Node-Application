@@ -5,18 +5,28 @@
     <%- include('../layouts/navigation')%>
     <main>
       <% if(errorMessage && errorMessage.length > 0) { %>
-      <div class="alert-container">
-        <div class="alert alert-error">
+      <div class="toast-container">
+        <div class="toast toast-error">
           <div><%= errorMessage %></div>
-          <img class="alert-cross-icon" src="/img/cross-icon-error.svg" />
+          <img
+            class="toast-cross-icon"
+            src="/img/cross-icon-error.svg"
+            onclick="closeToast(event)"
+          />
         </div>
+        <div class="toast-duration error"></div>
       </div>
       <% } else if(successMessage && successMessage.length > 0) { %>
-      <div class="alert-container">
-        <div class="alert alert-success">
+      <div class="toast-container">
+        <div class="toast toast-success">
           <div><%= successMessage %></div>
-          <img class="cross-icon" src="/img/cross-icon-success.svg" />
+          <img
+            class="toast-cross-icon"
+            src="/img/cross-icon-success.svg"
+            onclick="closeToast(event)"
+          />
         </div>
+        <div class="toast-duration success"></div>
       </div>
       <% } %>
       <form class="login-form" action="/login" method="POST">

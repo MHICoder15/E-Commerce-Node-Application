@@ -15,8 +15,18 @@ function menuToggleClickHandler() {
 backdrop.addEventListener("click", backdropClickHandler);
 menuToggle.addEventListener("click", menuToggleClickHandler);
 
-const alertContainer = document.querySelector(".alert-container");
-const alertIcon = document.querySelector(".alert-cross-icon");
-alertIcon.addEventListener("click", () => {
-  alertContainer.classList.add("display-none");
-});
+function closeToast(event) {
+  let toastClose = event.target;
+  toastClose.closest(".toast-container").remove();
+}
+function closeToastDuration() {
+  if (document.querySelectorAll(".toast-container")) {
+    let toasts = document.querySelectorAll(".toast-container");
+    toasts.forEach((toast) => {
+      setTimeout(() => {
+        toast.remove();
+      }, 5000);
+    });
+  }
+}
+closeToastDuration();
