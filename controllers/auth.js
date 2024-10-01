@@ -1,5 +1,14 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "mhicoder@gmail.com",
+    pass: "$tarm%vvzo%ygcg%celd$",
+  },
+});
 
 exports.getRegister = (req, res, next) => {
   res.render("auth/register", {
@@ -26,7 +35,7 @@ exports.postRegister = (req, res, next) => {
           req.flash("error", "Email is already existed.");
           return res.redirect("/register");
         }
-        return bcrypt
+        bcrypt
           .hash(password, 10)
           .then((hashPassword) => {
             const user = new User({
@@ -38,9 +47,23 @@ exports.postRegister = (req, res, next) => {
             user
               .save()
               .then((result) => {
-                console.log("Created User");
-                req.flash("success", "New user has been created.");
-                res.redirect("/login");
+                const mailOptions = {
+                  from: "mhicoder@gmail.com",
+                  to: email,
+                  subject: "Signup succeeded.",
+                  html: "<h1>You have successfully signed up!</h1>",
+                };
+                transporter
+                  .sendMail(mailOptions)
+                  .then((info) => {
+                    console.log("Email sent: " + info.response);
+                    console.log("Created User");
+                    req.flash("success", "New user has been created.");
+                    res.redirect("/login");
+                  })
+                  .catch((error) => {
+                    console.log("Send Email to User Error:", error);
+                  });
               })
               .catch((err) => {
                 console.log("Add User Error:", err);
