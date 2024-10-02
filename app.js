@@ -1,6 +1,11 @@
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
+const session = require("express-session");
+const MongodbStore = require("connect-mongodb-session")(session);
+const csrf = require("csurf");
+const flash = require("connect-flash");
+const dotenv = require("dotenv");
 
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
@@ -8,16 +13,19 @@ const authRoutes = require("./routes/auth");
 const errorController = require("./controllers/error");
 
 const User = require("./models/user");
-
 const connectMongoDB = require("./utils/database.util").connectMongoDB;
-const session = require("express-session");
-const MongodbStore = require("connect-mongodb-session")(session);
-const csrf = require("csurf");
-const flash = require("connect-flash");
 
 const app = express();
+
+// Dot Env Config
+dotenv.config();
+const PORT = process.env.PORT;
+const MONGO_DB_URI = process.env.MONGO_DB_URI;
+const SESSION_SECRET = process.env.SESSION_SECRET;
+
+// Mongo DB Session Store
 const store = new MongodbStore({
-  uri: "mongodb://127.0.0.1:27017/e-commerce-db",
+  uri: MONGO_DB_URI,
   collection: "sessions",
 });
 const csrfProtection = csrf();
@@ -35,7 +43,7 @@ app.set("views", "views");
 // Middleware For Session
 app.use(
   session({
-    secret: "MHI_Secret_For_Session",
+    secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: store,
@@ -70,5 +78,5 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 connectMongoDB(() => {
-  app.listen(3000, () => console.log("Server is running on port 3000"));
+  app.listen(PORT, () => console.log("Server is running on port 3000"));
 });

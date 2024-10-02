@@ -1,9 +1,13 @@
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 const User = require("../models/user");
+
+dotenv.config();
+const MONGO_DB_URI = process.env.MONGO_DB_URI;
 
 const connectMongoDB = (callback) => {
   mongoose
-    .connect("mongodb://127.0.0.1:27017/e-commerce-db")
+    .connect(MONGO_DB_URI)
     .then((mongoInstance) => {
       console.log(
         `MongoDB Connected!! DB Host: ${mongoInstance.connection.host}`
