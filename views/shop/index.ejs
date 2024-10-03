@@ -4,7 +4,19 @@
   <body>
     <%- include('../layouts/navigation')%>
     <main>
-      <% if (prods.length > 0) { %>
+      <% if(errorMessage && errorMessage.length > 0) { %>
+      <div class="toast-container">
+        <div class="toast toast-error">
+          <div><%= errorMessage %></div>
+          <img
+            class="toast-cross-icon"
+            src="/img/cross-icon-error.svg"
+            onclick="closeToast(event)"
+          />
+        </div>
+        <div class="toast-duration error"></div>
+      </div>
+      <% } %> <% if (prods.length > 0) { %>
       <div class="grid">
         <% for (let product of prods) { %>
         <article class="card product-item">
