@@ -4,6 +4,19 @@
   <body>
     <%- include('../layouts/navigation')%>
     <main>
+      <% if(errorMessage && errorMessage.length > 0) { %>
+      <div class="toast-container">
+        <div class="toast toast-error">
+          <div><%= errorMessage %></div>
+          <img
+            class="toast-cross-icon"
+            src="/img/cross-icon-error.svg"
+            onclick="closeToast(event)"
+          />
+        </div>
+        <div class="toast-duration error"></div>
+      </div>
+      <% } %>
       <form
         class="product-form"
         action="/admin/<% if (editing) { %>edit-product<% } else { %>add-product<% } %>"
@@ -12,36 +25,55 @@
         <div class="form-control">
           <label for="title">Title</label>
           <input
+            class="<%= validationErrors.includes('title') ? 'invalid': '' %>"
             type="text"
             name="title"
             id="title"
-            value="<% if (editing) { %><%= product.title %><% } %>"
+            value="<% if (editing || hasError) { %><%= product.title %><% } %>"
           />
+          <% if(validationErrors.includes('title')) { %>
+          <p class="error-msg">Title field is required.</p>
+          <% } %>
         </div>
         <div class="form-control">
           <label for="imageUrl">Image URL</label>
           <input
+            class="<%= validationErrors.includes('imageUrl') ? 'invalid': '' %>"
             type="text"
             name="imageUrl"
             id="imageUrl"
-            value="<% if (editing) { %><%= product.imageUrl %><% } %>"
+            value="<% if (editing || hasError) { %><%= product.imageUrl %><% } %>"
           />
+          <% if(validationErrors.includes('imageUrl')) { %>
+          <p class="error-msg">Image URL field is required.</p>
+          <% } %>
         </div>
         <div class="form-control">
           <label for="price">Price</label>
           <input
+            class="<%= validationErrors.includes('price') ? 'invalid': '' %>"
             type="number"
             name="price"
             id="price"
             step="0.01"
-            value="<% if (editing) { %><%= product.price %><% } %>"
+            value="<% if (editing || hasError) { %><%= product.price %><% } %>"
           />
+          <% if(validationErrors.includes('price')) { %>
+          <p class="error-msg">Price field is required.</p>
+          <% } %>
         </div>
         <div class="form-control">
           <label for="description">Description</label>
-          <textarea name="description" id="description" rows="5">
-            <% if (editing) { %><%= product.description %><% } %>
-          </textarea>
+          <input
+            class="<%= validationErrors.includes('description') ? 'invalid': '' %>"
+            type="text"
+            name="description"
+            id="description"
+            value="<% if (editing || hasError) { %><%= product.description %><% } %>"
+          />
+          <% if(validationErrors.includes('description')) { %>
+          <p class="error-msg">Description field is required.</p>
+          <% } %>
         </div>
         <% if (editing) { %>
         <input type="hidden" value="<%= product._id %>" name="productId" />

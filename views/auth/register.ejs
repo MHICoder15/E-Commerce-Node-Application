@@ -19,20 +19,58 @@
       <% } %>
       <form class="register-form" action="/register" method="POST">
         <div class="form-control">
-          <label for="name">Name</label>
-          <input type="name" name="name" id="name" />
+          <label for="name">Name*</label>
+          <input
+            class="<%= validationErrors.includes('name') ? 'invalid': '' %>"
+            type="text"
+            name="name"
+            id="name"
+            value="<%= inputData.name %>"
+          />
+          <% if(validationErrors.includes('name')) { %>
+          <p class="error-msg">Name field is required.</p>
+          <% } %>
         </div>
         <div class="form-control">
-          <label for="email">E-mail</label>
-          <input type="email" name="email" id="email" />
+          <label for="email">Email*</label>
+          <input
+            class="<%= validationErrors.includes('email') ? 'invalid': '' %>"
+            type="email"
+            name="email"
+            id="email"
+            value="<%= inputData.email %>"
+          />
+          <% if(validationErrors.includes('email')) { %>
+          <p class="error-msg">Email field is required.</p>
+          <% } %>
         </div>
         <div class="form-control">
-          <label for="password">Password</label>
-          <input type="password" name="password" id="password" />
+          <label for="password">Password*</label>
+          <input
+            class="<%= validationErrors.includes('password') ? 'invalid': '' %>"
+            type="password"
+            name="password"
+            id="password"
+            value="<%= inputData.password %>"
+          />
+          <% if(validationErrors.includes('password')) { %>
+          <p class="error-msg">Password field is required.</p>
+          <% } %>
         </div>
         <div class="form-control">
-          <label for="confirmPassword">Confirm Password</label>
-          <input type="password" name="confirmPassword" id="confirmPassword" />
+          <label for="confirmPassword">Confirm Password*</label>
+          <input
+            class="<%= validationErrors.includes('password') || validationErrors.includes('confirmPassword') ? 'invalid': '' %>"
+            type="password"
+            name="confirmPassword"
+            id="confirmPassword"
+            value="<%= inputData.confirmPassword %>"
+          />
+          <% if(validationErrors.includes('password')) { %>
+          <p class="error-msg">Confirm password field is required.</p>
+          <% } else if(validationErrors.includes('confirmPassword')) { %>
+          <p class="error-msg">Passwords does not matched.</p>
+          <% } %>
         </div>
         <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
         <button class="btn" type="submit">Register</button>
