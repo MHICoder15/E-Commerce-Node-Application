@@ -6,6 +6,7 @@ const MongodbStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 const flash = require("connect-flash");
 const dotenv = require("dotenv");
+const multer = require("multer");
 
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
@@ -31,11 +32,36 @@ const store = new MongodbStore({
 });
 const csrfProtection = csrf();
 
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now().toString() + "-" + file.originalname);
+  },
+});
+const fileFilterCheck = (req, file, cb) => {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg"
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
 // Middleware for body parser
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilterCheck }).single("image")
+);
+
 // Middleware for static file
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 // Middleware For Ejs Template
 app.set("view engine", "ejs");
@@ -87,10 +113,11 @@ app.use(errorController.get404);
 
 app.use((error, req, res, next) => {
   // res.redirect("/500");
+
   res.status(500).render("500", {
     pageTitle: "Server Error",
     path: "/500",
-    isAuthentication: req.session.isLoggedIn,
+    isAuthenticated: req.session.isLoggedIn,
   });
 });
 

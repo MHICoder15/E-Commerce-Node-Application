@@ -1,5 +1,7 @@
 const Product = require("../models/product");
 const Order = require("../models/order");
+const fs = require("fs");
+const path = require("path");
 
 exports.getProducts = (req, res, next) => {
   Product.find()
@@ -151,4 +153,36 @@ exports.getOrders = (req, res, next) => {
       console.log("🚀 ~ Find Order", error);
       return next(error);
     });
+};
+
+exports.getInvoice = (req, res, next) => {
+  // const orderId = req.params.orderId;
+  // const invoiceName = "invoice-" + orderId + ".pdf";
+  // const invoicePath = path.join("data", "invoices", invoiceName);
+  // // const invoicePath = path.join(__dirname, "data", "invoices", invoiceName);
+
+  // fs.readFile(invoicePath, (err, data) => {
+  //   console.log("🚀 ~ fs.readFile ~ data:", data);
+  //   console.log("🚀 ~ fs.readFile ~ err:", err);
+  //   if (err) {
+  //     return next(err);
+  //   }
+  //   res.send(data);
+  // });
+
+  const orderId = req.params.orderId;
+  console.log("🚀 ~ orderId:", orderId);
+  const invoiceName = "invoice-" + orderId + ".pdf";
+  console.log("🚀 ~ invoiceName:", invoiceName);
+
+  const invoicePath = path.join("data", "invoices", invoiceName);
+  console.log("🚀 ~ invoicePath:", invoicePath);
+  fs.readFile(invoicePath, (err, data) => {
+    console.log("🚀 ~ fs.readFile ~ err:", err);
+    console.log("🚀 ~ fs.readFile ~ data:", data);
+    if (err) {
+      return next(err);
+    }
+    res.send(data);
+  });
 };
