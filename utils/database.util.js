@@ -27,8 +27,11 @@ const connectMongoDB = (callback) => {
       // });
       callback();
     })
-    .catch((error) => {
-      console.log("MongoDB Connection Error:", error);
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      console.log("🚀 ~ MongoDB Connection", error);
+      return next(error);
     });
 };
 exports.connectMongoDB = connectMongoDB;

@@ -11,6 +11,7 @@ const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
 const errorController = require("./controllers/error");
+const isAuth = require("./middlewares/is-auth");
 
 const User = require("./models/user");
 const connectMongoDB = require("./utils/database.util").connectMongoDB;
@@ -53,21 +54,27 @@ app.use(csrfProtection);
 app.use(flash());
 
 app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
+app.use((req, res, next) => {
   if (!req.session.user) {
     return next();
   }
   User.findById(req.session.user._id)
     .then((user) => {
+      if (!user) {
+        return next();
+      }
       req.user = user;
       next();
     })
-    .catch((err) => console.log("Find User By ID Error:", err));
-});
-
-app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.session.isLoggedIn;
-  res.locals.csrfToken = req.csrfToken();
-  next();
+    .catch((err) => {
+      console.log("Find User By ID", err);
+      next(new Error(err));
+    });
 });
 
 // Middleware For Routes
@@ -75,7 +82,17 @@ app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 
+app.get("/500", isAuth, errorController.get500);
 app.use(errorController.get404);
+
+app.use((error, req, res, next) => {
+  // res.redirect("/500");
+  res.status(500).render("500", {
+    pageTitle: "Server Error",
+    path: "/500",
+    isAuthentication: req.session.isLoggedIn,
+  });
+});
 
 connectMongoDB(() => {
   app.listen(PORT, () => console.log("Server is running on port 3000"));

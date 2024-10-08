@@ -92,16 +92,25 @@ exports.postRegister = (req, res, next) => {
               req.flash("success", "New user has been created.");
               res.redirect("/login");
             })
-            .catch((error) => {
-              console.log("Send Email to User Error:", error);
+            .catch((err) => {
+              const error = new Error(err);
+              error.httpStatusCode = 500;
+              console.log("🚀 ~ Send Email to User", error);
+              return next(error);
             });
         })
         .catch((err) => {
-          console.log("Add User Error:", err);
+          const error = new Error(err);
+          error.httpStatusCode = 500;
+          console.log("🚀 ~ Add User", error);
+          return next(error);
         });
     })
-    .catch((error) => {
-      console.log("Hashing Password Error", error);
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      console.log("🚀 ~ Hashing Password", error);
+      return next(error);
     });
   // })
   // .catch((error) => {
@@ -178,11 +187,19 @@ exports.postLogin = (req, res, next) => {
             },
           });
         })
-        .catch((error) => {
-          console.log("Comparing Password Error", error);
+        .catch((err) => {
+          const error = new Error(err);
+          error.httpStatusCode = 500;
+          console.log("🚀 ~ Comparing Password", error);
+          return next(error);
         });
     })
-    .catch((err) => console.log("Find User Error:", err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      console.log("🚀 ~ Find User", error);
+      return next(error);
+    });
 };
 
 exports.postLogout = (req, res, next) => {
@@ -238,12 +255,18 @@ exports.postResetPassword = (req, res, next) => {
               req.flash("success", "Check your email to reset password.");
               res.redirect("/reset");
             })
-            .catch((error) => {
-              console.log("Send Email to User Error:", error);
+            .catch((err) => {
+              const error = new Error(err);
+              error.httpStatusCode = 500;
+              console.log("🚀 ~ Send Email to User", error);
+              return next(error);
             });
         })
-        .catch((error) => {
-          console.log("Find User Error", error);
+        .catch((err) => {
+          const error = new Error(err);
+          error.httpStatusCode = 500;
+          console.log("🚀 ~ Find User", error);
+          return next(error);
         });
     });
   } else {
@@ -272,8 +295,11 @@ exports.getNewPassword = (req, res, next) => {
         successMessage: req.flash("success"),
       });
     })
-    .catch((error) => {
-      console.log("Find User Error", error);
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      console.log("🚀 ~ Find User", error);
+      return next(error);
     });
 };
 
@@ -296,8 +322,11 @@ exports.postNewPassword = (req, res, next) => {
     })
       .then((user) => {
         updateUser = user;
-        return bcrypt.hash(newPassword, 12).catch((error) => {
-          console.log("Hashing Password Error", error);
+        return bcrypt.hash(newPassword, 12).catch((err) => {
+          const error = new Error(err);
+          error.httpStatusCode = 500;
+          console.log("🚀 ~ Hashing Password", error);
+          return next(error);
         });
       })
       .then((hashPassword) => {
@@ -308,8 +337,11 @@ exports.postNewPassword = (req, res, next) => {
         req.flash("success", "Password reset successfully!");
         res.redirect("/login");
       })
-      .catch((error) => {
-        console.log("Find User Error", error);
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        console.log("🚀 ~ Find User", error);
+        return next(error);
       });
   } else {
     req.flash("error", "Please fill-in valid data in all fields & try again.");
