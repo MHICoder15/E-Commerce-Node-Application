@@ -1,4 +1,5 @@
 const Product = require("../models/product");
+const fileHelper = require("../utils/file.util");
 const { validationResult } = require("express-validator");
 
 exports.getAddProduct = (req, res, next) => {
@@ -181,6 +182,7 @@ exports.postEditProduct = (req, res, next) => {
       product.price = updatedPrice;
       product.description = updatedDesc;
       if (image) {
+        fileHelper.deleteFile(product.imageUrl);
         product.imageUrl = image.path;
       }
       return product.save().then((result) => {
@@ -217,19 +219,32 @@ exports.getProducts = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.deleteOne({ _id: prodId, userId: req.user._id })
-    .then((result) => {
-      if (result.deletedCount === 0) {
-        req.flash("error", "Only Authorized users can delete products!");
-        return res.redirect("/");
+  Product.findById(prodId)
+    .then((product) => {
+      if (!product) {
+        return next(new Error("No Product Found."));
       }
-      console.log("DESTROYED PRODUCT");
-      res.redirect("/admin/products");
+      fileHelper.deleteFile(product.imageUrl);
+      Product.deleteOne({ _id: prodId, userId: req.user._id })
+        .then((result) => {
+          if (result.deletedCount === 0) {
+            req.flash("error", "Only Authorized users can delete products!");
+            return res.redirect("/");
+          }
+          console.log("DESTROYED PRODUCT");
+          res.redirect("/admin/products");
+        })
+        .catch((err) => {
+          const error = new Error(err);
+          error.httpStatusCode = 500;
+          console.log("🚀 ~ Delete Product", error);
+          return next(error);
+        });
     })
     .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
-      console.log("🚀 ~ Delete Product", error);
+      console.log("🚀 ~ Find Product By Id", error);
       return next(error);
     });
 };
