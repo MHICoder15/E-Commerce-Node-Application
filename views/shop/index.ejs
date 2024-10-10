@@ -38,7 +38,9 @@
         </article>
         <% } %>
       </div>
-      <% } else { %>
+      <%- include('../layouts/pagination.ejs', {totalPages:
+      totalPages,currentPage: currentPage,nextPage: nextPage,previousPage:
+      previousPage}) %> <% } else { %>
       <h1>No Products Found!</h1>
       <% } %>
     </main>
